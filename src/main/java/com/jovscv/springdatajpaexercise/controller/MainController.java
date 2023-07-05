@@ -19,13 +19,13 @@ public class MainController {
 
     private final StudentService service;
 
-    @PostMapping
+    @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@RequestBody StudentDto studentDto) throws JsonProcessingException {
         service.saveStudent(studentDto);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<StudentDto>> retrieveAllStudents() throws JsonProcessingException {
         return ResponseEntity.ok(service.retrieveAllStudents());
     }
@@ -50,6 +50,11 @@ public class MainController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addCourse(@PathVariable("student_id") Long id,@RequestBody CourseDto courseDto) throws JsonProcessingException {
         service.addCourse(id,courseDto);
+    }
+
+    @GetMapping("/sample")
+    public String sample() {
+        return "jovanie";
     }
 
 }

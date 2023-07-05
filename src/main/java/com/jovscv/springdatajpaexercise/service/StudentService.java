@@ -59,9 +59,11 @@ public class StudentService {
 
     public Map<String, Object> retrieveCourses(Long id) {
         try {
-            return getResponseObject(SUCCESS_STATUS, courseRepository.findAll().stream()
-                    .filter(course -> course.getStudent().getId().equals(id))
-                    .findFirst().get());
+//            return getResponseObject(SUCCESS_STATUS, courseRepository.findAll().stream()
+//                    .filter(course -> course.getStudent().getId().equals(id))
+//                    .findFirst().get());
+
+            return getResponseObject(SUCCESS_STATUS, courseRepository.findCourseByStudentId(id).get());
 
         }catch (Exception e) {
             throw  new RuntimeException(e.getMessage());
