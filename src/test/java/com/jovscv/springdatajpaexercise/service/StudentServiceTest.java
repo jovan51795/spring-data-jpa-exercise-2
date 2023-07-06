@@ -45,6 +45,10 @@ class StudentServiceTest {
 
     @Autowired
     private StudentService studentService;
+
+    /**
+     * Method under test: {@link StudentService#saveStudent(StudentDto)}
+     */
     @Test
     void testSaveStudent() throws JsonProcessingException {
         Student student = new Student();
@@ -71,7 +75,25 @@ class StudentServiceTest {
         verify(objectMapper).writeValueAsString(Mockito.<Object>any());
     }
 
+    /**
+     * Method under test: {@link StudentService#saveStudent(StudentDto)}
+     */
+    @Test
+    @Disabled
+    void testSaveStudent2() throws JsonProcessingException {
+        when(objectMapper.readValue(Mockito.<String>any(), Mockito.<Class<Object>>any())).thenReturn("Value");
+        when(objectMapper.readValue(Mockito.<String>any(), Mockito.<Class<Student>>any()))
+                .thenThrow(new NoSuchElementException("foo"));
+        when(objectMapper.writeValueAsString(Mockito.<Object>any())).thenThrow(new NoSuchElementException("foo"));
+        assertThrows(RuntimeException.class,
+                () -> studentService.saveStudent(new StudentDto(1L, "Jane", "Doe", "42 Main St", 1, new ArrayList<>())));
+        verify(objectMapper).readValue(Mockito.<String>any(), Mockito.<Class<Object>>any());
+        verify(objectMapper).writeValueAsString(Mockito.<Object>any());
+    }
 
+    /**
+     * Method under test: {@link StudentService#retrieveAllStudents()}
+     */
     @Test
     void testRetrieveAllStudents() throws JsonProcessingException {
         when(studentRepository.findAll()).thenReturn(new ArrayList<>());
@@ -84,6 +106,26 @@ class StudentServiceTest {
         verify(objectMapper).writeValueAsString(Mockito.<Object>any());
     }
 
+    /**
+     * Method under test: {@link StudentService#retrieveAllStudents()}
+     */
+    @Test
+    @Disabled
+    void testRetrieveAllStudents2() throws JsonProcessingException {
+        when(studentRepository.findAll()).thenReturn(new ArrayList<>());
+        when(objectMapper.readValue(Mockito.<String>any(), Mockito.<Class<Object>>any())).thenReturn("Value");
+        when(objectMapper.readValue(Mockito.<String>any(), Mockito.<Class<StudentDto[]>>any()))
+                .thenThrow(new NoSuchElementException("foo"));
+        when(objectMapper.writeValueAsString(Mockito.<Object>any())).thenThrow(new NoSuchElementException("foo"));
+        assertThrows(RuntimeException.class, () -> studentService.retrieveAllStudents());
+        verify(studentRepository).findAll();
+        verify(objectMapper).readValue(Mockito.<String>any(), Mockito.<Class<Object>>any());
+        verify(objectMapper).writeValueAsString(Mockito.<Object>any());
+    }
+
+    /**
+     * Method under test: {@link StudentService#retrieveStudent(Long)}
+     */
     @Test
     void testRetrieveStudent() throws JsonProcessingException {
         Student student = new Student();
@@ -105,6 +147,31 @@ class StudentServiceTest {
     }
 
     /**
+     * Method under test: {@link StudentService#retrieveStudent(Long)}
+     */
+    @Test
+    @Disabled
+    void testRetrieveStudent2() throws JsonProcessingException {
+        Student student = new Student();
+        student.setAddress("42 Main St");
+        student.setAge(1);
+        student.setCourse(new ArrayList<>());
+        student.setFirstName("Jane");
+        student.setId(1L);
+        student.setLastName("Doe");
+        Optional<Student> ofResult = Optional.of(student);
+        when(studentRepository.findById(Mockito.<Long>any())).thenReturn(ofResult);
+        when(objectMapper.readValue(Mockito.<String>any(), Mockito.<Class<Object>>any())).thenReturn("Value");
+        when(objectMapper.readValue(Mockito.<String>any(), Mockito.<Class<StudentDto>>any()))
+                .thenThrow(new NoSuchElementException("status"));
+        when(objectMapper.writeValueAsString(Mockito.<Object>any())).thenThrow(new NoSuchElementException("status"));
+        assertThrows(RuntimeException.class, () -> studentService.retrieveStudent(1L));
+        verify(studentRepository).findById(Mockito.<Long>any());
+        verify(objectMapper).readValue(Mockito.<String>any(), Mockito.<Class<Object>>any());
+        verify(objectMapper).writeValueAsString(Mockito.<Object>any());
+    }
+
+    /**
      * Method under test: {@link StudentService#retrieveCourses(Long)}
      */
     @Test
@@ -114,7 +181,9 @@ class StudentServiceTest {
         verify(courseRepository).findCourseByStudentId(Mockito.<Long>any());
     }
 
-
+    /**
+     * Method under test: {@link StudentService#retrieveCourses(Long)}
+     */
     @Test
     void testRetrieveCourses2() {
         when(courseRepository.findCourseByStudentId(Mockito.<Long>any())).thenReturn(Optional.empty());
@@ -122,7 +191,9 @@ class StudentServiceTest {
         verify(courseRepository).findCourseByStudentId(Mockito.<Long>any());
     }
 
-
+    /**
+     * Method under test: {@link StudentService#retrieveCourses(Long)}
+     */
     @Test
     void testRetrieveCourses3() {
         when(courseRepository.findCourseByStudentId(Mockito.<Long>any())).thenThrow(new RuntimeException("foo"));
@@ -130,6 +201,9 @@ class StudentServiceTest {
         verify(courseRepository).findCourseByStudentId(Mockito.<Long>any());
     }
 
+    /**
+     * Method under test: {@link StudentService#retrieveCourse(Long, Long)}
+     */
     @Test
     void testRetrieveCourse() {
         Student student = new Student();
@@ -145,6 +219,9 @@ class StudentServiceTest {
         verify(studentRepository).findById(Mockito.<Long>any());
     }
 
+    /**
+     * Method under test: {@link StudentService#retrieveCourse(Long, Long)}
+     */
     @Test
     void testRetrieveCourse2() {
         Student student = mock(Student.class);
@@ -174,6 +251,9 @@ class StudentServiceTest {
         verify(student).setLastName(Mockito.<String>any());
     }
 
+    /**
+     * Method under test: {@link StudentService#retrieveCourse(Long, Long)}
+     */
     @Test
     void testRetrieveCourse3() {
         Student student = new Student();
@@ -219,6 +299,9 @@ class StudentServiceTest {
         verify(student2).setLastName(Mockito.<String>any());
     }
 
+    /**
+     * Method under test: {@link StudentService#retrieveCourse(Long, Long)}
+     */
     @Test
     void testRetrieveCourse4() {
         Student student = new Student();
@@ -279,6 +362,9 @@ class StudentServiceTest {
         verify(student3).setLastName(Mockito.<String>any());
     }
 
+    /**
+     * Method under test: {@link StudentService#retrieveCourse(Long, Long)}
+     */
     @Test
     void testRetrieveCourse5() {
         when(studentRepository.findById(Mockito.<Long>any())).thenReturn(Optional.empty());
@@ -327,6 +413,9 @@ class StudentServiceTest {
         verify(objectMapper).writeValueAsString(Mockito.<Object>any());
     }
 
+    /**
+     * Method under test: {@link StudentService#addCourse(Long, CourseDto)}
+     */
     @Test
     void testAddCourse2() throws JsonProcessingException {
         when(courseRepository.save(Mockito.<Course>any())).thenThrow(new RuntimeException("foo"));
@@ -353,7 +442,9 @@ class StudentServiceTest {
         verify(objectMapper).writeValueAsString(Mockito.<Object>any());
     }
 
-
+    /**
+     * Method under test: {@link StudentService#getResponseObject(int, Object)}
+     */
     @Test
     void testGetResponseObject() {
         assertEquals(2, StudentService.getResponseObject(1, "Data").size());
